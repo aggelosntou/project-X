@@ -1,0 +1,5 @@
+src/main
+*.o
+*.out
+*.dSYM/
+.vscode/
