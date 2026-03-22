@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/aggelosntou/Desktop/project-X/ai-systems/c-learning/matrix-lib-c/src/main'
+relocations:     []
+...
