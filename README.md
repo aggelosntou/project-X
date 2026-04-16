@@ -49,8 +49,8 @@ No phase is skipped. No phase is rushed.
 
 ```
 Phase 0 → Language & Tooling Foundations        [C, Python, tooling]
-Phase 1 → Systems Programming                   [memory, OS, networks]
-Phase 2 → Computer Architecture                 [hardware, CPUs, GPUs]
+Phase 1 → Systems Programming                   [memory, OS, networks, concurrency]
+Phase 2 → Computer Architecture                 [hardware, CPUs, GPUs, compilers, databases]
 Phase 3 → AI & ML from Scratch                  [math → code → systems]
 Phase 4 → ML Systems Engineering                [the book comes alive]
 ```
@@ -84,10 +84,11 @@ A mathematician who cannot code fluently is a mathematician. This phase ends tha
 ---
 
 ## Phase 1 — Systems Programming
-**Goal:** Understand how an operating system works by building pieces of one.
+**Goal:** Understand how an operating system works by building pieces of one. Understand how concurrent programs fail and how to make them correct.
 
 This is where most ML engineers have a blind spot.  
-Understanding processes, files, sockets, and memory at the OS level is what separates people who debug production systems from people who restart them.
+Understanding processes, files, sockets, and memory at the OS level is what separates people who debug production systems from people who restart them.  
+Concurrency is not optional for ML Systems — distributed training, data pipelines, and inference servers are all concurrent programs. This phase builds the foundation to reason about them correctly.
 
 ### Projects
 
@@ -98,22 +99,33 @@ Understanding processes, files, sockets, and memory at the OS level is what sepa
 | `http-server` | C | TCP sockets, HTTP/1.1 parsing, concurrent connections, `select`/`epoll` |
 | `file-system-toy` | C | Inodes, directories, block allocation — a tiny FS on a file |
 | `tcp-server` | Rust | Ownership model, async I/O, safe systems programming |
+| `thread-pool` | C | Pthreads, mutexes, condition variables, work queues, thread lifecycle |
+| `lock-free-queue` | C | Atomics, memory ordering, CAS operations, ABA problem |
+| `parallel-matrix-multiply` | C | OpenMP, thread scaling, Amdahl's Law measured in practice |
+
+### Why concurrency here
+Every ML Systems bottleneck is ultimately a concurrency problem. GPU utilization at 60% instead of 95% is a data loading concurrency problem. A distributed training run that hangs is a synchronization problem. An inference server with poor throughput is a batching and threading problem. Building a thread pool and a lock-free queue from scratch gives you the mental model to diagnose all of these — not just follow a tutorial to fix them.
 
 ### Completion criteria
 - Can explain what happens when you run `./program` from the shell, step by step
 - Understands file descriptors, process isolation, and virtual memory
 - Has implemented `malloc` and understands why it's hard to do well
 - Can write a server that handles concurrent connections without crashing
+- Understands mutexes, condition variables, and when each is appropriate
+- Can explain what a race condition is, produce one deliberately, and fix it
+- Understands memory ordering: what `acquire`, `release`, and `seq_cst` mean and why it matters
+- Has measured Amdahl's Law directly — seen parallelism hit its ceiling on real hardware
 - Has read: *Computer Systems: A Programmer's Perspective* (CS:APP), chapters 1–12
+- Has read: *The Art of Multiprocessor Programming* — Herlihy & Shavit, chapters 1–7
 
 ---
 
 ## Phase 2 — Computer Architecture
-**Goal:** Understand what hardware actually executes. Think in memory, latency, and bandwidth.
+**Goal:** Understand what hardware actually executes. Think in memory, latency, and bandwidth. Understand how languages become machine code. Understand how data systems store and retrieve information.
 
 The ML Systems book makes one thing clear: **the bottleneck is memory bandwidth, not compute**.  
 You cannot optimize what you do not understand.  
-This phase builds hardware intuition — what is fast, what is slow, and why.
+This phase builds hardware intuition — what is fast, what is slow, and why — and adds two critical capabilities: understanding how ML frameworks and compilers work underneath, and how data systems are built, since every ML pipeline is ultimately a data management problem.
 
 ### Projects
 
@@ -124,13 +136,27 @@ This phase builds hardware intuition — what is fast, what is slow, and why.
 | `matrix-multiply-optimized` | C | SIMD, loop tiling, cache-oblivious algorithms, `perf` profiling |
 | `bytecode-vm` | C++ | Stack machine, bytecode design, interpreter loop, JIT concepts |
 | `gpu-intro` | CUDA/C | Thread hierarchy, shared memory, memory coalescing, first CUDA kernel |
+| `mini-compiler` | C | Lexer, parser, AST, IR design, code generation for a small language |
+| `mini-database` | C | B-tree storage engine, simple query execution, disk I/O, indexing |
+
+### Why a compiler here
+`torch.compile()`, TVM, XLA, Triton — every modern ML optimization tool is a compiler. When you write a custom CUDA kernel in Phase 4 or read the FlashAttention paper, you are doing compiler work. The mini-compiler project teaches lexing, parsing, IR design, and code generation — the four concepts that underpin everything from PyTorch's graph compiler to LLVM-based model optimization. Without this, those tools are black boxes. With it, they are legible.
+
+### Why a database here
+Every ML pipeline is a data management problem. Feature stores, vector databases, training data versioning, streaming data loaders — these are all built on database internals. Understanding B-trees, storage engines, and disk I/O patterns directly informs how to build efficient data pipelines, why certain data formats (Parquet, Arrow) are fast, and how vector databases work for retrieval-augmented generation. The mini-database project makes all of this concrete.
 
 ### Completion criteria
 - Can read `perf stat` output and understand what each counter means
 - Understands why a naive matrix multiply is 10× slower than BLAS
 - Has written a CUDA kernel and understands the GPU memory hierarchy
 - Can explain: cache lines, SIMD, branch prediction, memory coalescing
+- Can implement a lexer and parser for a simple grammar from scratch
+- Understands what an IR is and why compilers use one
+- Understands B-tree structure and why it is the dominant storage data structure
+- Can explain the difference between a sequential scan and an index scan and when each wins
 - Has read: *Computer Organization and Design* (Patterson & Hennessy), parts I–III
+- Has read: *Crafting Interpreters* — Robert Nystrom (both parts: tree-walk and bytecode)
+- Has read: *Database Internals* — Alex Petrov, chapters 1–6
 
 ---
 
@@ -159,7 +185,7 @@ Building it from scratch means you will never be confused by it again.
 - Understands what a computation graph is and why it matters
 - Has trained a transformer that actually converges, written from scratch
 - Can explain the vanishing gradient problem and why residual connections fix it
-- Has read: *Deep Learning* (Goodfellow, Bengio, Courville), all chapters  
+- Has read: *Deep Learning* (Goodfellow, Bengio, Courville), all chapters
 - Has read: *ML Systems* (Reddi), Parts I and II
 
 ---
@@ -190,7 +216,7 @@ By this phase, every concept in the book has a project behind it.
 - Understands memory bandwidth constraints and designs around them
 - Has run distributed training and debugged a gradient synchronization bug
 - Can read a paper like FlashAttention and implement the key ideas
-- Has read: *ML Systems* (Reddi), all parts  
+- Has read: *ML Systems* (Reddi), all parts
 - Has read: 10+ systems papers (see reading list below)
 
 ---
@@ -202,11 +228,14 @@ These are not optional. They are part of the curriculum.
 ### Books (in order)
 1. *The C Programming Language* — Kernighan & Ritchie
 2. *Computer Systems: A Programmer's Perspective* — Bryant & O'Hallaron
-3. *Computer Organization and Design* — Patterson & Hennessy
-4. *Deep Learning* — Goodfellow, Bengio, Courville
-5. *Machine Learning Systems* — Vijay Janapa Reddi (Harvard)
-6. *Designing Data-Intensive Applications* — Kleppmann
-7. *The Art of Doing Science and Engineering* — Hamming
+3. *The Art of Multiprocessor Programming* — Herlihy & Shavit (chapters 1–7)
+4. *Computer Organization and Design* — Patterson & Hennessy
+5. *Crafting Interpreters* — Robert Nystrom (free online)
+6. *Database Internals* — Alex Petrov (chapters 1–6)
+7. *Deep Learning* — Goodfellow, Bengio, Courville
+8. *Machine Learning Systems* — Vijay Janapa Reddi (Harvard)
+9. *Designing Data-Intensive Applications* — Kleppmann
+10. *The Art of Doing Science and Engineering* — Hamming
 
 ### Papers (build up to these)
 - *Attention Is All You Need* — Vaswani et al. (2017)
@@ -227,7 +256,7 @@ These are not optional. They are part of the curriculum.
 ```
 Project-X/
 │
-├── README.md                    ← this document
+├── README.md                         ← this document
 │
 ├── phase-0-foundations/
 │   ├── hello-systems/
@@ -241,14 +270,19 @@ Project-X/
 │   ├── unix-shell/
 │   ├── http-server/
 │   ├── file-system-toy/
-│   └── tcp-server-rust/
+│   ├── tcp-server-rust/
+│   ├── thread-pool/
+│   ├── lock-free-queue/
+│   └── parallel-matrix-multiply/
 │
 ├── phase-2-architecture/
 │   ├── cpu-emulator/
 │   ├── cache-experiments/
 │   ├── matrix-multiply-optimized/
 │   ├── bytecode-vm/
-│   └── gpu-intro/
+│   ├── gpu-intro/
+│   ├── mini-compiler/
+│   └── mini-database/
 │
 ├── phase-3-ai-from-scratch/
 │   ├── matrix-library-c/
@@ -273,10 +307,10 @@ Project-X/
 │   └── benchmark-suite/
 │
 ├── docs/
-│   ├── notes/                   ← concept notes per topic
-│   ├── paper-reviews/           ← written reviews of papers read
-│   ├── design-decisions/        ← why certain implementations were chosen
-│   └── learning-log/            ← weekly progress entries
+│   ├── notes/                        ← concept notes per topic
+│   ├── paper-reviews/                ← written reviews of papers read
+│   ├── design-decisions/             ← why certain implementations were chosen
+│   └── learning-log/                 ← weekly progress entries
 │
 └── assets/
 ```
@@ -309,6 +343,15 @@ The mathematics background is an advantage here. The instinct to prove things be
 
 **Why C first?**  
 Because C does not hide anything. Every allocation is explicit. Every pointer is visible. The programmer is responsible for everything. Learning ML systems in Python without this is like doing calculus without understanding limits — you can follow the rules, but you cannot reason about the edges.
+
+**Why concurrency in Phase 1?**  
+Because every ML Systems bottleneck — slow data pipelines, underutilized GPUs, hanging distributed training runs — is a concurrency problem at its root. Building a thread pool and a lock-free queue from scratch gives you the mental model to diagnose these problems, not just restart the job and hope.
+
+**Why a compiler in Phase 2?**  
+Because `torch.compile`, TVM, Triton, and XLA are all compilers. The engineers who can extend, debug, and reason about these tools are the ones who built something similar first. A mini-compiler turns the most important ML optimization tools from black boxes into readable systems.
+
+**Why a database in Phase 2?**  
+Because every ML pipeline is a data management problem. Feature stores, vector databases, streaming data loaders, training data versioning — these are all built on the same ideas as a storage engine. Understanding B-trees and disk I/O directly informs every data engineering decision in Phase 4.
 
 **Why build from scratch instead of using frameworks?**  
 Because the engineers who will matter in ten years are not the ones who learned the PyTorch API. They are the ones who could have written parts of it. A from-scratch neural network in C is not useful for production. It is useful for the engineer who wrote it.
