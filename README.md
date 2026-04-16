@@ -1,170 +1,350 @@
 # Project-X
 
-Project-X is my from-scratch engineering journey into programming, systems, AI, and computer science.
-
-The purpose of this repository is not just to collect code, but to document a deep learning process: understanding how software and hardware work from first principles by building real projects myself.
-
-I am approaching this as a mathematician moving into serious engineering. That means this repository is designed around two goals:
-
-1. learning how to build systems step by step, and  
-2. understanding the ideas behind them, not only making them work.
+**Author:** Angelos Ntousis  
+**Background:** Mathematician  
+**Target:** Top 0.1% ML Systems Engineer / Scientist  
+**Timeline:** Pre-masters  
 
 ---
 
-## Vision
+> *"The biggest lesson from 70 years of AI research is that general methods that leverage computation are ultimately the most effective — and by a large margin."*
+> — Richard Sutton, The Bitter Lesson
 
-The long-term goal of Project-X is to develop real depth across the stack:
+This is not a collection of exercises.  
+This is a structured, documented engineering transformation — from mathematician to someone who understands computing at the deepest level, before entering a masters program in ML/AI.
 
-- programming fundamentals
-- systems programming
-- AI from scratch
-- compilers and language tools
-- operating systems
-- networks
-- low-level computer architecture
-- robotics and control
-- hacker-style systems understanding in the good sense: deep technical literacy
+The goal is not to finish this repository. The goal is to become the kind of engineer who could have written it from first principles.
 
-This repository is meant to track that transformation through carefully chosen projects.
+---
+
+## What this is
+
+Project-X is a pre-masters curriculum built around one conviction:
+
+**The engineers who will define the next decade of AI are those who understand the full stack — from transistors to transformers — not just how to call an API.**
+
+This repository tracks the journey of building that understanding, one project at a time, with every decision documented and every concept understood — not just implemented.
+
+---
+
+## The Target
+
+To become a top 0.1% ML Systems engineer means being able to:
+
+- Implement a neural network from scratch in C, understanding every byte
+- Understand why a transformer runs slowly and fix it at the hardware level
+- Design and run a distributed training experiment from first principles
+- Read a systems paper (CUDA kernel optimization, memory bandwidth analysis, quantization) and implement the ideas
+- Enter a masters program already thinking like a researcher, not a student
+- Build ambitious systems that other engineers consider hard
+
+This repository is the documented path to that level.
+
+---
+
+## Structure of the Journey
+
+The journey is organized into **five phases**, each building on the last.  
+No phase is skipped. No phase is rushed.
+
+```
+Phase 0 → Language & Tooling Foundations        [C, Python, tooling]
+Phase 1 → Systems Programming                   [memory, OS, networks]
+Phase 2 → Computer Architecture                 [hardware, CPUs, GPUs]
+Phase 3 → AI & ML from Scratch                  [math → code → systems]
+Phase 4 → ML Systems Engineering                [the book comes alive]
+```
+
+Each phase has concrete projects, clear completion criteria, and documented learning.
+
+---
+
+## Phase 0 — Language and Tooling Foundations
+**Goal:** Be dangerous in C and Python. Understand the tools of the trade.
+
+This phase is about removing the friction between an idea and an implementation.  
+A mathematician who cannot code fluently is a mathematician. This phase ends that.
+
+### Projects
+
+| Project | Language | What it teaches |
+|---|---|---|
+| `hello-systems` | C | Compilation pipeline, Makefile, GCC flags, linking, undefined behavior |
+| `pointers-and-memory` | C | Pointers, pointer arithmetic, stack vs heap, segfaults, valgrind |
+| `string-library` | C | Manual memory management, buffer handling, null termination |
+| `python-numpy-from-scratch` | Python | NumPy internals intuition, vectorization, broadcasting |
+| `data-structures-c` | C | Linked list, hash map, dynamic array — by hand, with tests |
+
+### Completion criteria
+- Can write a C program from scratch, compile it, debug it with GDB, and check it with valgrind
+- Understands the difference between a pointer and a value, a stack frame and a heap allocation
+- Can use NumPy without documentation for standard operations
+- Has read: *The C Programming Language* (K&R), chapters 1–6
+
+---
+
+## Phase 1 — Systems Programming
+**Goal:** Understand how an operating system works by building pieces of one.
+
+This is where most ML engineers have a blind spot.  
+Understanding processes, files, sockets, and memory at the OS level is what separates people who debug production systems from people who restart them.
+
+### Projects
+
+| Project | Language | What it teaches |
+|---|---|---|
+| `memory-allocator` | C | `malloc`/`free` from scratch, free lists, fragmentation, `sbrk` |
+| `unix-shell` | C | `fork`, `exec`, `wait`, pipes, file descriptors, signals |
+| `http-server` | C | TCP sockets, HTTP/1.1 parsing, concurrent connections, `select`/`epoll` |
+| `file-system-toy` | C | Inodes, directories, block allocation — a tiny FS on a file |
+| `tcp-server` | Rust | Ownership model, async I/O, safe systems programming |
+
+### Completion criteria
+- Can explain what happens when you run `./program` from the shell, step by step
+- Understands file descriptors, process isolation, and virtual memory
+- Has implemented `malloc` and understands why it's hard to do well
+- Can write a server that handles concurrent connections without crashing
+- Has read: *Computer Systems: A Programmer's Perspective* (CS:APP), chapters 1–12
+
+---
+
+## Phase 2 — Computer Architecture
+**Goal:** Understand what hardware actually executes. Think in memory, latency, and bandwidth.
+
+The ML Systems book makes one thing clear: **the bottleneck is memory bandwidth, not compute**.  
+You cannot optimize what you do not understand.  
+This phase builds hardware intuition — what is fast, what is slow, and why.
+
+### Projects
+
+| Project | Language | What it teaches |
+|---|---|---|
+| `cpu-emulator` | C | Fetch-decode-execute cycle, registers, ALU, instruction encoding |
+| `cache-experiments` | C | L1/L2/L3 behavior, cache lines, false sharing, memory access patterns |
+| `matrix-multiply-optimized` | C | SIMD, loop tiling, cache-oblivious algorithms, `perf` profiling |
+| `bytecode-vm` | C++ | Stack machine, bytecode design, interpreter loop, JIT concepts |
+| `gpu-intro` | CUDA/C | Thread hierarchy, shared memory, memory coalescing, first CUDA kernel |
+
+### Completion criteria
+- Can read `perf stat` output and understand what each counter means
+- Understands why a naive matrix multiply is 10× slower than BLAS
+- Has written a CUDA kernel and understands the GPU memory hierarchy
+- Can explain: cache lines, SIMD, branch prediction, memory coalescing
+- Has read: *Computer Organization and Design* (Patterson & Hennessy), parts I–III
+
+---
+
+## Phase 3 — AI and ML from Scratch
+**Goal:** Implement every important idea in ML without using a framework.
+
+This is where the mathematics becomes code.  
+Every concept here is something most ML engineers use as a black box.  
+Building it from scratch means you will never be confused by it again.
+
+### Projects
+
+| Project | Language | What it teaches |
+|---|---|---|
+| `matrix-library-c` | C | Dense matrix ops, memory layout (row vs col major), BLAS interface design |
+| `autograd-engine` | Python | Automatic differentiation from scratch, computation graphs, backprop |
+| `neural-net-c` | C | Forward pass, backprop, weight updates — no libraries, pure C |
+| `neural-net-numpy` | Python | Same network in NumPy — connecting C intuition to Python workflow |
+| `transformer-from-scratch` | Python | Attention, positional encoding, layer norm — every line understood |
+| `conv-net-from-scratch` | Python | Convolutions, pooling, backprop through conv layers |
+| `optimizer-zoo` | Python | SGD, Momentum, Adam, AdamW — implement and compare |
+| `loss-functions` | Python | Cross-entropy, MSE, focal loss — derive gradients by hand first |
+
+### Completion criteria
+- Can implement backpropagation on paper and then in code
+- Understands what a computation graph is and why it matters
+- Has trained a transformer that actually converges, written from scratch
+- Can explain the vanishing gradient problem and why residual connections fix it
+- Has read: *Deep Learning* (Goodfellow, Bengio, Courville), all chapters  
+- Has read: *ML Systems* (Reddi), Parts I and II
+
+---
+
+## Phase 4 — ML Systems Engineering
+**Goal:** Bridge deep ML knowledge with production systems thinking.
+
+This is the target. This is the *ML Systems* book made real.  
+By this phase, every concept in the book has a project behind it.
+
+### Projects
+
+| Project | Language | What it teaches |
+|---|---|---|
+| `quantization-engine` | C/Python | INT8/FP16 quantization from scratch, accuracy vs speed tradeoffs |
+| `inference-server` | Python/C++ | Model serving, batching, latency vs throughput, REST API |
+| `distributed-training-toy` | Python | Data parallelism, gradient synchronization, `torch.distributed` |
+| `model-compression` | Python | Pruning, knowledge distillation — implement and benchmark |
+| `profiler` | Python/C | Custom profiler for a training loop — FLOPS, memory, time |
+| `data-pipeline` | Python | Streaming data loader, data versioning, augmentation pipeline |
+| `mlops-mini` | Python | Experiment tracking, model registry, automated retraining |
+| `edge-deployment` | C/Python | Export model to ONNX, run on CPU with optimized kernels |
+| `cuda-kernel-custom` | CUDA | Write a fused attention kernel, benchmark vs naive PyTorch |
+| `benchmark-suite` | C/Python | Reproduce MLPerf-style benchmarking methodology from scratch |
+
+### Completion criteria
+- Can take a trained model and make it 4× faster without meaningful accuracy loss
+- Understands memory bandwidth constraints and designs around them
+- Has run distributed training and debugged a gradient synchronization bug
+- Can read a paper like FlashAttention and implement the key ideas
+- Has read: *ML Systems* (Reddi), all parts  
+- Has read: 10+ systems papers (see reading list below)
+
+---
+
+## Reading List
+
+These are not optional. They are part of the curriculum.
+
+### Books (in order)
+1. *The C Programming Language* — Kernighan & Ritchie
+2. *Computer Systems: A Programmer's Perspective* — Bryant & O'Hallaron
+3. *Computer Organization and Design* — Patterson & Hennessy
+4. *Deep Learning* — Goodfellow, Bengio, Courville
+5. *Machine Learning Systems* — Vijay Janapa Reddi (Harvard)
+6. *Designing Data-Intensive Applications* — Kleppmann
+7. *The Art of Doing Science and Engineering* — Hamming
+
+### Papers (build up to these)
+- *Attention Is All You Need* — Vaswani et al. (2017)
+- *FlashAttention* — Dao et al. (2022)
+- *Efficient Memory Management for Large Language Model Serving* — vLLM (2023)
+- *Scaling Laws for Neural Language Models* — Kaplan et al. (2020)
+- *The Bitter Lesson* — Sutton (2019)
+- *BERT: Pre-training of Deep Bidirectional Transformers* — Devlin et al. (2018)
+- *An Image is Worth 16×16 Words* — Dosovitskiy et al. (2020)
+- *Roofline: An Insightful Visual Performance Model* — Williams et al. (2009)
+- *MLSys: The New Frontier of Machine Learning Systems* — Ratner et al.
+- *Megatron-LM: Training Multi-Billion Parameter Language Models* — Shoeybi et al.
+
+---
+
+## Repository Structure
+
+```
+Project-X/
+│
+├── README.md                    ← this document
+│
+├── phase-0-foundations/
+│   ├── hello-systems/
+│   ├── pointers-and-memory/
+│   ├── string-library/
+│   ├── python-numpy-from-scratch/
+│   └── data-structures-c/
+│
+├── phase-1-systems/
+│   ├── memory-allocator/
+│   ├── unix-shell/
+│   ├── http-server/
+│   ├── file-system-toy/
+│   └── tcp-server-rust/
+│
+├── phase-2-architecture/
+│   ├── cpu-emulator/
+│   ├── cache-experiments/
+│   ├── matrix-multiply-optimized/
+│   ├── bytecode-vm/
+│   └── gpu-intro/
+│
+├── phase-3-ai-from-scratch/
+│   ├── matrix-library-c/
+│   ├── autograd-engine/
+│   ├── neural-net-c/
+│   ├── neural-net-numpy/
+│   ├── transformer-from-scratch/
+│   ├── conv-net-from-scratch/
+│   ├── optimizer-zoo/
+│   └── loss-functions/
+│
+├── phase-4-ml-systems/
+│   ├── quantization-engine/
+│   ├── inference-server/
+│   ├── distributed-training-toy/
+│   ├── model-compression/
+│   ├── profiler/
+│   ├── data-pipeline/
+│   ├── mlops-mini/
+│   ├── edge-deployment/
+│   ├── cuda-kernel-custom/
+│   └── benchmark-suite/
+│
+├── docs/
+│   ├── notes/                   ← concept notes per topic
+│   ├── paper-reviews/           ← written reviews of papers read
+│   ├── design-decisions/        ← why certain implementations were chosen
+│   └── learning-log/            ← weekly progress entries
+│
+└── assets/
+```
+
+### Every project must contain
+- `README.md` — what it is, why it exists, how to build and run it
+- `src/` — the code
+- `LEARNINGS.md` — what concepts this project taught, what was hard, what tradeoffs were made
+- `BENCHMARKS.md` — where relevant: measurements, profiling results, comparisons
+
+---
+
+## Standards
+
+This repository holds itself to one standard:
+
+**Every line of code here was understood before it was written.**
+
+This means:
+- No copy-pasting without being able to delete it and rewrite it from memory
+- No using a library function without knowing what it does underneath
+- No "it works, I'll move on" — if it works but you cannot explain why, it is not finished
+- Every project has a written explanation a smart non-expert could follow
+
+The mathematics background is an advantage here. The instinct to prove things before accepting them applies directly.
 
 ---
 
 ## Philosophy
 
-Everything here is built with a few core principles:
+**Why C first?**  
+Because C does not hide anything. Every allocation is explicit. Every pointer is visible. The programmer is responsible for everything. Learning ML systems in Python without this is like doing calculus without understanding limits — you can follow the rules, but you cannot reason about the edges.
 
-- **from first principles** — understand what is happening underneath
-- **learn by building** — real projects over passive study
-- **depth over noise** — fewer, better, more meaningful projects
-- **clear documentation** — every project should explain what it does and what was learned
-- **public learning** — the repository is also a record of progress and technical growth
+**Why build from scratch instead of using frameworks?**  
+Because the engineers who will matter in ten years are not the ones who learned the PyTorch API. They are the ones who could have written parts of it. A from-scratch neural network in C is not useful for production. It is useful for the engineer who wrote it.
 
-This is not a dump of random exercises.  
-It is a structured engineering portfolio.
+**Why document everything?**  
+Because writing forces clarity. You do not understand something until you can explain it simply. Every `LEARNINGS.md` is a forcing function: if you cannot write it down, you did not learn it.
 
----
-
-## What this repository contains
-
-Project-X serves as a home for projects in areas such as:
-
-- **C** for memory, low-level programming, systems, and performance
-- **C++** for larger systems, engines, compilers, and architecture
-- **Rust** for safe systems programming and modern tooling
-- **Python** for rapid prototyping, scripting, AI experimentation, and tooling
-
-Projects may include:
-
-- matrix libraries
-- neural networks from scratch
-- shells
-- HTTP servers
-- memory allocators
-- parsers and interpreters
-- compilers
-- CPU emulators
-- logic-gate-to-computer builds
-- networking tools
-- robotics/control experiments
-- operating systems and low-level systems work
+**Why this before a masters?**  
+Because the difference between a masters student who knows this material and one who does not is not one semester. It is the difference between someone who can immediately contribute to research and someone who spends the first year catching up. The goal is to arrive already thinking at the level the program expects to teach.
 
 ---
 
-## Repository structure
+## Completion Definition
 
-The exact layout will evolve, but the repository is generally organized by project or topic.
+Project-X is complete when:
 
-Example structure:
+1. Every phase has at least its core projects finished and documented
+2. The reading list is done — books read, papers reviewed and written up
+3. A systems paper can be read, understood, and partially implemented within a week
+4. The Phase 4 projects demonstrate measurable, benchmarked results
+5. The repository tells a coherent story: a mathematician who became an engineer, one project at a time
 
-```text
-Project-X/
-├── README.md
-├── projects/
-│   ├── matrix-lib-c/
-│   ├── tiny-nn-c/
-│   ├── unix-shell-c/
-│   ├── http-server-c/
-│   ├── bytecode-vm-cpp/
-│   ├── tcp-server-rust/
-│   └── cpu-emulator/
-├── docs/
-│   ├── notes/
-│   ├── design-decisions/
-│   └── learning-log/
-└── assets/
+That is the portfolio. That is the proof.
 
-Each project should ideally include:
-	•	its own README
-	•	build/run instructions
-	•	explanation of the core idea
-	•	what I learned from implementing it
+---
 
-⸻
+## Status
 
-Learning goals
+> Phase 0 — In progress  
+> Phase 1 — Not started  
+> Phase 2 — Not started  
+> Phase 3 — Not started  
+> Phase 4 — Not started  
 
-Through Project-X, I want to become able to:
-	•	write clean, low-level code
-	•	understand memory, processes, files, and networking
-	•	move comfortably across abstraction layers
-	•	implement important ideas from scratch
-	•	connect mathematics to real systems
-	•	build technical intuition, not only theoretical knowledge
-	•	create a portfolio of serious projects with clear explanations
+*This repository is actively being built. Each phase will be updated as projects are completed.*
 
-⸻
+---
 
-Current direction
-
-This repository is part of a larger long-term path toward:
-	•	strong AI and systems engineering depth
-	•	research-level technical maturity
-	•	first-principles thinking in computing
-	•	building ambitious technology in the future
-
-The immediate focus is on foundational systems and programming projects, especially in C, before expanding into larger systems, compilers, computer architecture, networks, and robotics.
-
-⸻
-
-How to use this repository
-
-This repository can be read in two ways:
-
-As a portfolio
-
-You can browse completed projects and see what was built.
-
-As a learning record
-
-You can follow the progression from fundamentals to deeper systems work.
-
-Each project aims to answer:
-	•	what problem is being solved
-	•	how it was implemented
-	•	what concepts it teaches
-	•	what tradeoffs were involved
-	•	what I learned from building it
-
-⸻
-
-What I want this repository to become
-
-Over time, I want Project-X to become:
-	•	a serious engineering portfolio
-	•	a public record of technical growth
-	•	a map of my transition from mathematics into deep software/systems/AI building
-	•	a foundation for future research, advanced engineering, and entrepreneurship
-
-⸻
-
-Status
-
-Project-X is an active work in progress.
-
-New projects, improvements, refactors, and notes will continue to be added as the journey develops.
-
-⸻
-
-Author
-
-Angelos
+*Built by Angelos Ntousis — mathematician, engineer in progress.*
